@@ -1,0 +1,5 @@
+#+title: Nand2Tetris Notes and exercises
+
+While going through *Computer Systems: A programmer's perspective* I noticed that I could use some more fundamental boolean logic. Since I'm trying to [[https://teachyourselfcs.com][teach my self CS]] I decided to go with the recommendation of going through the Nand2Tetris course along with reading through the first half of *The elements of computing systems*.
+
+This repo is to keep track of my notes and the exercises of the course.
