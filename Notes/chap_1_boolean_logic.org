@@ -9,6 +9,7 @@
 - *Truth Table representation*:
    A truth table is a table that represents all possible inputs and outputs of a boolean function, as shown bellow ~f(x,y,z) = (x | y) & !z~
 
+
         | x | y | z | f(x,y,z) |
         |---+---+---+----------|
         | 0 | 0 | 0 |        0 |
