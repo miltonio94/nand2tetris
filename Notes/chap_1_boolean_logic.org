@@ -45,4 +45,4 @@ Using the information above we can deduce that the canonical representation for 
 
 The Canonical representation of a function leads us to the conclusion that:
 #+begin_quote
-Every boolean function can be represented using three boolean operators: And (~&~), Or (~|~) and Not (~\sim~).
+Every boolean function can be represented using three boolean operators: And (~&~), Or (~|~) and Not (~).
