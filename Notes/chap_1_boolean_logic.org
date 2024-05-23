@@ -46,6 +46,7 @@ Using the information above we can deduce that the canonical representation for 
 The Canonical representation of a function leads us to the conclusion that:
 #+begin_quote
 Every boolean function can be represented using three boolean operators: And (~&~), Or (~|~) and Not (~).
+#+end_quote
 
 
 The canonical representation can then be further simplified by the laws that govern boolean logic.
