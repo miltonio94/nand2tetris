@@ -1,0 +1,46 @@
+#+title: Chapter 1: Boolean Logic
+
+* Table of content :toc:
+- [[#11-background][1.1 Background]]
+  - [[#111-boolean-algebra][1.1.1 Boolean Algebra]]
+
+* 1.1 Background
+** 1.1.1 Boolean Algebra
+- *Truth Table representation*:
+   A truth table is a table that represents all possible inputs and outputs of a boolean function, as shown bellow ~f(x,y,z) = (x | y) & !z~
+        +----------------------+
+        | x | y | z | f(x,y,z) |
+        |---+---+---+----------|
+        | 0 | 0 | 0 |        0 |
+        | 0 | 0 | 1 |        0 |
+        | 0 | 1 | 0 |        1 |
+        | 0 | 1 | 1 |        0 |
+        | 1 | 0 | 0 |        1 |
+        | 1 | 1 | 0 |        1 |
+        | 1 | 1 | 1 |        0 |
+
+- *Canonical Representation*:
+  Every Boolean function can be represented by at least one boolean epression, this expression is know as the /Canonical representation/. To figure out the canonical representation we start with a truth table, for every row that results in a 1 we write down how to get the result by applying and to the variables.
+  After doing this for every row, we OR each of the operations we just figured out together and that's the canonical representation of the function.
+
+  As an example, lets work out the canonical function for the table above
+
+        +----------------------------------------+
+        | x | y | z | f(x,y,z) | formula for row |
+        |---+---+---+----------+-----------------|
+        | 0 | 0 | 0 |        0 | N/A             |
+        | 0 | 0 | 1 |        0 | N/A             |
+        | 0 | 1 | 0 |        1 | ~x & y & ~z     |
+        | 0 | 1 | 1 |        0 | N/A             |
+        | 1 | 0 | 0 |        1 | x & ~y & ~z     |
+        | 1 | 1 | 0 |        1 | x & y & ~z      |
+        | 1 | 1 | 1 |        0 | N/A             |
+
+Using the information above we can deduce that the canonical representation for this function is:
+#+begin_src c
+(~x & y & ~z) | (x & ~y & ~z) | (x & y & ~0)
+#+end_src
+
+The Canonical representation of a function leads us to the conclusion:
+#+begin_quote
+Every boolean function can be represented using three boolean operators: And (~&~), Or (~|~) and Not (~\sim~).
