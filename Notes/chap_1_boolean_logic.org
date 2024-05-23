@@ -8,7 +8,7 @@
 ** 1.1.1 Boolean Algebra
 - *Truth Table representation*:
    A truth table is a table that represents all possible inputs and outputs of a boolean function, as shown bellow ~f(x,y,z) = (x | y) & !z~
-        +----------------------+
+
         | x | y | z | f(x,y,z) |
         |---+---+---+----------|
         | 0 | 0 | 0 |        0 |
@@ -25,7 +25,7 @@
 
   As an example, lets work out the canonical function for the table above
 
-        +----------------------------------------+
+
         | x | y | z | f(x,y,z) | formula for row |
         |---+---+---+----------+-----------------|
         | 0 | 0 | 0 |        0 | N/A             |
