@@ -1,4 +1,5 @@
 #+title: Chapter 1: Boolean Logic
+#+auto_tangle: t
 
 * Table of content :toc:
 - [[#11-background][1.1 Background]]
@@ -40,7 +41,7 @@
 
 Using the information above we can deduce that the canonical representation for this function is:
 #+begin_src c
-(~x & y & ~z) | (x & ~y & ~z) | (x & y & ~0)
+(~x & y & ~z) | (x & ~y & ~z) | (x & y & ~z);
 #+end_src
 
 The Canonical representation of a function leads us to the conclusion that:
@@ -51,5 +52,103 @@ Every boolean function can be represented using three boolean operators: And (~&
 
 The canonical representation can then be further simplified by the laws that govern boolean logic.
 
-- *Boolean laws*:
-  - /*Commutative Laws*/
+- *Boolean Laws*:
+  - *Commutative Laws:*
+    #+begin_src c
+    (x & y) == (y & x);
+    (x | y) == (y | x);
+    #+end_src
+  - *Associative Laws:*
+    #+begin_src c
+    (x & (y & z)) == ((x & y) & z);
+    (x | (y | z)) == ((x | y) & z);
+    #+end_src
+  - *Distributive Laws:*
+    #+begin_src c
+    (x & (y | z)) == ((x & y) | (x & z));
+    (x | (y & z)) == ((x | y) & (x | z));
+    #+end_src
+  - *De Morgan Laws:*
+    #+begin_src c
+    !(x & y) == !x | !y;
+    !(x | y) == !x & !y;
+    #+end_src
+  - *Idempotence Law:*
+    #+begin_src c
+    x & x == x;
+    ~x & ~x == ~x;
+    #+end_src
+
+- *Boolean Function Synthesis:*
+  Take the above table
+    #+begin_src c
+    (~x & y & ~z) | (x & ~y & ~z) | (x & y & ~z)
+    // re-arrange to put the two terms that cancel eachother out (the y cancels itself) first
+    == (x & ~y & ~z) | (x & y & ~z) | (~x & y & ~z)
+    // cancel the y out (~y | y will always be y)
+    == (x & ~z) | (x & ~z) | (~x & y & ~z)
+    // remember that (x & ~z) | (x & ~z) == (x & ~z)
+    == (x & ~z) | (~x & y & ~z)
+    // expand the terms by applying associative law
+    == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z) & (~z | ~z) & (~z | ~z)
+    // start simplyfing
+    == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
+
+    == ~x  & (y | x) & (y) & ~z
+
+    == (~x | ~z) & (y & x | ~z) & ~z
+
+    ==  (~x | ~z) & (y & ~z)
+
+    #+end_src
+    Test code for the above in c
+    #+begin_src c :tangle test_bool_logic.c :auto-tangle t
+#include <stdio.h>
+
+unsigned char test_bool_logic(unsigned char x, unsigned char y, unsigned char z) {
+  return  (~x  | ~z) & (y | x) & (y | ~z) & ~z ;
+      //(~x & y & ~z) | (x & ~z);
+}
+
+unsigned char original_bool_logic(unsigned char x, unsigned char y, unsigned char z) {
+  return (~x & y & ~z) | (x & ~y & ~z) | (x & y & ~z);
+}
+
+int main() {
+
+  printf("Original bool logic \n");
+  printf("%.2x\n", original_bool_logic(0, 0, 0));
+  printf("%.2x\n", original_bool_logic(0, 0, 255));
+  printf("%.2x\n", original_bool_logic(0, 255, 0));
+  printf("%.2x\n", original_bool_logic(0, 255, 255));
+  printf("%.2x\n", original_bool_logic(255, 0, 0));
+  printf("%.2x\n", original_bool_logic(255, 255, 0));
+  printf("%.2x\n", original_bool_logic(255, 255, 255));
+
+  printf("\n\n");
+  printf("Simplified bool logic \n");
+  printf("%.2x\n", test_bool_logic(0, 0, 0));
+  printf("%.2x\n", test_bool_logic(0, 0, 255));
+  printf("%.2x\n", test_bool_logic(0, 255, 0));
+  printf("%.2x\n", test_bool_logic(0, 255, 255));
+  printf("%.2x\n", test_bool_logic(255, 0, 0));
+  printf("%.2x\n", test_bool_logic(255, 255, 0));
+  printf("%.2x\n", test_bool_logic(255, 255, 255));
+}
+    #+end_src
+    Proof table
+
+        | x | y | z | f(x,y,z) = (~x & y) \vert (x & ~y) \vert (x & y) & ~z |
+        |---+---+---+-----------------------------------------------|
+        | 0 | 0 | 0 |                                             0 |
+        | 0 | 0 | 1 |                                             0 |
+        | 0 | 1 | 0 |                                             1 |
+        | 0 | 1 | 1 |                                             1 |
+        | 1 | 0 | 0 |                                               |
+        | 1 | 1 | 0 |                                               |
+        | 1 | 1 | 1 |                                               |
+        |   |   |   |                                               |
+
+    (¬x ∧ y ∧ ¬z) ∨ (x ∧ ¬y ∧ ¬z) ∨ (x ∧ y ∧ ¬z)
+
+(¬x ∧ y ∧ ¬z) ∨ (x ∧ ¬y ∧ ¬z) ∨ (x ∧ y ∧ ¬z);
