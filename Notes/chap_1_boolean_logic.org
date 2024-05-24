@@ -18,6 +18,7 @@
         | 0 | 1 | 0 |        1 |
         | 0 | 1 | 1 |        0 |
         | 1 | 0 | 0 |        1 |
+        | 1 | 0 | 1 |        0 |
         | 1 | 1 | 0 |        1 |
         | 1 | 1 | 1 |        0 |
 
@@ -36,6 +37,7 @@
         | 0 | 1 | 0 |        1 | ~x & y & ~z     |
         | 0 | 1 | 1 |        0 | N/A             |
         | 1 | 0 | 0 |        1 | x & ~y & ~z     |
+        | 1 | 0 | 1 |        1 | N/A             |
         | 1 | 1 | 0 |        1 | x & y & ~z      |
         | 1 | 1 | 1 |        0 | N/A             |
 
@@ -89,28 +91,32 @@ The canonical representation can then be further simplified by the laws that gov
     == (x & ~z) | (x & ~z) | (~x & y & ~z)
     // remember that (x & ~z) | (x & ~z) == (x & ~z)
     == (x & ~z) | (~x & y & ~z)
-    // expand the terms by applying associative law
+    // let's find another simplification, expand the terms by applying associative law
     == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z) & (~z | ~z) & (~z | ~z)
     // start simplyfing
     == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
+    // ~x | x  can be cancelled out
+    == (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
+    // Apply indempotent law (~z | ~z == z)
+    == (~x | ~z) & (y | x) & (y | ~z) & ~z
+    // We can use De Morgan laws to simplify slight the first term of the equation
+    == ~(x & z) & (y | x) & (y | ~z) & ~z
+    // I don't know what I did here, I just thought that hte two x canceled eachother out since they are oposites
+    == (y | x) & ~z | (~z & y)
 
-    == ~x  & (y | x) & (y) & ~z
-
-    == (~x | ~z) & (y & x | ~z) & ~z
-
-    ==  (~x | ~z) & (y & ~z)
 
     #+end_src
     Test code for the above in c
     #+begin_src c :tangle test_bool_logic.c :auto-tangle t
 #include <stdio.h>
 
-unsigned char test_bool_logic(unsigned char x, unsigned char y, unsigned char z) {
-  return  (~x  | ~z) & (y | x) & (y | ~z) & ~z ;
-      //(~x & y & ~z) | (x & ~z);
+unsigned char test_bool_logic(unsigned char x, unsigned char y,
+                              unsigned char z) {
+  return (y | x) & ~z | (~z & y);
 }
 
-unsigned char original_bool_logic(unsigned char x, unsigned char y, unsigned char z) {
+unsigned char original_bool_logic(unsigned char x, unsigned char y,
+                                  unsigned char z) {
   return (~x & y & ~z) | (x & ~y & ~z) | (x & y & ~z);
 }
 
@@ -122,6 +128,7 @@ int main() {
   printf("%.2x\n", original_bool_logic(0, 255, 0));
   printf("%.2x\n", original_bool_logic(0, 255, 255));
   printf("%.2x\n", original_bool_logic(255, 0, 0));
+  printf("%.2x\n", original_bool_logic(255, 0, 255));
   printf("%.2x\n", original_bool_logic(255, 255, 0));
   printf("%.2x\n", original_bool_logic(255, 255, 255));
 
@@ -132,23 +139,21 @@ int main() {
   printf("%.2x\n", test_bool_logic(0, 255, 0));
   printf("%.2x\n", test_bool_logic(0, 255, 255));
   printf("%.2x\n", test_bool_logic(255, 0, 0));
+  printf("%.2x\n", test_bool_logic(255, 0, 255));
   printf("%.2x\n", test_bool_logic(255, 255, 0));
   printf("%.2x\n", test_bool_logic(255, 255, 255));
 }
     #+end_src
     Proof table
 
-        | x | y | z | f(x,y,z) = (~x & y) \vert (x & ~y) \vert (x & y) & ~z |
-        |---+---+---+-----------------------------------------------|
-        | 0 | 0 | 0 |                                             0 |
-        | 0 | 0 | 1 |                                             0 |
-        | 0 | 1 | 0 |                                             1 |
-        | 0 | 1 | 1 |                                             1 |
-        | 1 | 0 | 0 |                                               |
-        | 1 | 1 | 0 |                                               |
-        | 1 | 1 | 1 |                                               |
-        |   |   |   |                                               |
+        | x | y | z | f(x,y,z) = (y \vert x) & ~z \vert (~z & y) |
+        |---+---+---+------------------------------------|
+        | 0 | 0 | 0 |                                  0 |
+        | 0 | 0 | 1 |                                  0 |
+        | 0 | 1 | 0 |                                  1 |
+        | 0 | 1 | 1 |                                  0 |
+        | 1 | 0 | 0 |                                  1 |
+        | 1 | 0 | 1 |                                  0 |
+        | 1 | 1 | 0 |                                  1 |
+        | 1 | 1 | 1 |                                  0 |
 
-    (¬x ∧ y ∧ ¬z) ∨ (x ∧ ¬y ∧ ¬z) ∨ (x ∧ y ∧ ¬z)
-
-(¬x ∧ y ∧ ¬z) ∨ (x ∧ ¬y ∧ ¬z) ∨ (x ∧ y ∧ ¬z);
