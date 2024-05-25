@@ -2,7 +2,7 @@
 
 unsigned char test_bool_logic(unsigned char x, unsigned char y,
                               unsigned char z) {
-  return (y | x) & ~z | (~z & y);
+  return (y | x) & ~z;
 }
 
 unsigned char original_bool_logic(unsigned char x, unsigned char y,

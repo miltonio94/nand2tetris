@@ -4,6 +4,7 @@
 * Table of content :toc:
 - [[#11-background][1.1 Background]]
   - [[#111-boolean-algebra][1.1.1 Boolean Algebra]]
+- [[#12-logic-gates][1.2 Logic gates]]
 
 * 1.1 Background
 ** 1.1.1 Boolean Algebra
@@ -24,7 +25,7 @@
 
 
 - *Canonical Representation*:
-  Every Boolean function can be represented by at least one boolean epression, this expression is know as the /Canonical representation/. To figure out the canonical representation we start with a truth table, for every row that results in a 1 we write down how to get the result by applying and to the variables.
+  Every Boolean function can be represented by at least one boolean epression, this expression is know as the /Canonical representation/. To figure out the canonical representation we start with a truth table, for every row that results in a 1 we write down how to get the result by applying the logical and operator and the not operator only to the variables.
   After doing this for every row, we OR each of the operations we just figured out together and that's the canonical representation of the function.
 
   As an example, lets work out the canonical function for the table above
@@ -79,6 +80,7 @@ The canonical representation can then be further simplified by the laws that gov
     #+begin_src c
     x & x == x;
     ~x & ~x == ~x;
+    x | x == x
     #+end_src
 
 - *Boolean Function Synthesis:*
@@ -103,16 +105,38 @@ The canonical representation can then be further simplified by the laws that gov
     == ~(x & z) & (y | x) & (y | ~z) & ~z
     // I don't know what I did here, I just thought that hte two x canceled eachother out since they are oposites
     == (y | x) & ~z | (~z & y)
-
+    // we can then use absorption law to reduce it to
+    == (y | x) & ~z
 
     #+end_src
+    Help from raquel:
+
+#+begin_src c
+    (~x & y & ~z) | (x & ~y & ~z) | (x & y & ~z)
+    // re-arrange to put the two terms that cancel eachother out (the y cancels itself) first
+    == (x & ~y & ~z) | (x & y & ~z) | (~x & y & ~z)
+    // cancel the y out (~y | y will always be y)
+    == (x & ~z) | (x & ~z) | (~x & y & ~z)
+    // remember that (x & ~z) | (x & ~z) == (x & ~z)
+    == (x & ~z) | (~x & y & ~z)
+    // let's find another simplification, expand the terms by applying associative law
+    == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z) & (~z | ~z) & (~z | ~z)
+    // start simplyfing
+    == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
+    // ~x | x  can be cancelled out
+    == (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
+    // Apply indempotent law (~z | ~z == z)
+    == (~x | ~z) & (y | x) & (y | ~z) & ~z
+    // We can use absorption laws ((~x | ~z) & ~z ==  ~z) ((y | ~z) & ~z ==  ~z)
+    == (y | x) &  ~z
+#+end_src
     Test code for the above in c
     #+begin_src c :tangle test_bool_logic.c :auto-tangle t
 #include <stdio.h>
 
 unsigned char test_bool_logic(unsigned char x, unsigned char y,
                               unsigned char z) {
-  return (y | x) & ~z | (~z & y);
+  return (y | x) & ~z;
 }
 
 unsigned char original_bool_logic(unsigned char x, unsigned char y,
@@ -157,3 +181,42 @@ int main() {
         | 1 | 1 | 0 |                                  1 |
         | 1 | 1 | 1 |                                  0 |
 
+
+- Do we need all the logical operations?
+  We do not need the or (~|~) operator. We can create an or gate with only the NOT operator and the AND operator
+  De Morgan law states that
+  #+begin_src c
+  ~(x & y) == ~x | ~y
+  #+end_src
+  and so we could extrapolate from that
+  #+begin_src c
+  x | y == ~(~x & ~y)
+  #+end_src
+
+  Can we give up any other of the gates? No, we can't. We need the AND and NOT operators to extrapolate all other operators.
+
+  But there is a boolean function that allows us to represent all other functions from it. It's the /NAND/ function. Then NAND function returns 0 only when both of it's inputs are 1, and 1 for all other possibilities. Here's a truth table for it
+ | x | y | NAND |
+ |---+---+------|
+ | 0 | 0 |    1 |
+ | 0 | 1 |    1 |
+ | 1 | 0 |    1 |
+ | 1 | 1 |    0 |
+
+NAND is defined as
+#+begin_src c
+NAND(x, y) == ~(x & y)
+#+end_src
+
+Proof that NAND can represent all other boolean logic
+
+#+begin_src c
+~x ==  NAND(x, x);
+x & y == ~(x NAND y) == NAND(NAND(x, y), NAND(x, y))
+#+end_src
+And since we know we can represent or with just the NOT operator and the AND operator we now know we can represent all boolean functions with just NAND.
+
+
+
+
+* 1.2 Logic gates
