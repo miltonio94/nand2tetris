@@ -5,6 +5,7 @@
 - [[#11-background][1.1 Background]]
   - [[#111-boolean-algebra][1.1.1 Boolean Algebra]]
 - [[#12-logic-gates][1.2 Logic gates]]
+- [[#thanks][Thanks]]
 
 * 1.1 Background
 ** 1.1.1 Boolean Algebra
@@ -101,35 +102,13 @@ The canonical representation can then be further simplified by the laws that gov
     == (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
     // Apply indempotent law (~z | ~z == z)
     == (~x | ~z) & (y | x) & (y | ~z) & ~z
-    // We can use De Morgan laws to simplify slight the first term of the equation
-    == ~(x & z) & (y | x) & (y | ~z) & ~z
-    // I don't know what I did here, I just thought that hte two x canceled eachother out since they are oposites
-    == (y | x) & ~z | (~z & y)
-    // we can then use absorption law to reduce it to
+    // we can apply absortion law once again
+    == (~x | ~z) & (y | x) & ~z
+    // re-arrange the equation using commutative law
+    == (y | x) & (~x | ~z) &  ~z
+    // use absortion law once again and we arrive at
     == (y | x) & ~z
-
     #+end_src
-    Help from raquel:
-
-#+begin_src c
-    (~x & y & ~z) | (x & ~y & ~z) | (x & y & ~z)
-    // re-arrange to put the two terms that cancel eachother out (the y cancels itself) first
-    == (x & ~y & ~z) | (x & y & ~z) | (~x & y & ~z)
-    // cancel the y out (~y | y will always be y)
-    == (x & ~z) | (x & ~z) | (~x & y & ~z)
-    // remember that (x & ~z) | (x & ~z) == (x & ~z)
-    == (x & ~z) | (~x & y & ~z)
-    // let's find another simplification, expand the terms by applying associative law
-    == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z) & (~z | ~z) & (~z | ~z)
-    // start simplyfing
-    == (~x | x) & (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
-    // ~x | x  can be cancelled out
-    == (~x | ~z) & (y | x) & (y | ~z) & (~z | ~z)
-    // Apply indempotent law (~z | ~z == z)
-    == (~x | ~z) & (y | x) & (y | ~z) & ~z
-    // We can use absorption laws ((~x | ~z) & ~z ==  ~z) ((y | ~z) & ~z ==  ~z)
-    == (y | x) &  ~z
-#+end_src
     Test code for the above in c
     #+begin_src c :tangle test_bool_logic.c :auto-tangle t
 #include <stdio.h>
@@ -215,8 +194,7 @@ Proof that NAND can represent all other boolean logic
 x & y == ~(x NAND y) == NAND(NAND(x, y), NAND(x, y))
 #+end_src
 And since we know we can represent or with just the NOT operator and the AND operator we now know we can represent all boolean functions with just NAND.
-
-
-
-
 * 1.2 Logic gates
+
+* Thanks
+Thank you to Raquel for the help on boolean logic and pointing out the absorption law that governs boolean logic
