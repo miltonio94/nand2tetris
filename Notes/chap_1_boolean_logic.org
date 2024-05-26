@@ -83,6 +83,12 @@ The canonical representation can then be further simplified by the laws that gov
     ~x & ~x == ~x;
     x | x == x
     #+end_src
+  - Absorption law
+    #+begin_src c
+    x & (x | y) == x
+    y | (x & y) == y
+    #+end_src
+
 
 - *Boolean Function Synthesis:*
   Take the above table
