@@ -242,7 +242,7 @@ The next step here is to name each of the connections in our diagram
 [[./imgs/lecture_1_4_derivation_xor_logic_gate_diagram_interface_named_interanl_conections.png]]
 With that we can implement this diagram with HDL.
 Here's our HDL stub file, let's focus on the implementation. We begin by describing one chip at a time that makes up the gate we are trying to construct. To do so, we write a single HDL statement that describes the chip along with all it's connections
-#+begin_src hdl :tangle xor.hdl
+#+begin_src hdl :tangle ../projects/1/Xor.hdl
 /** Xor gate: out = (a And Not(b)) Or (Not(a) And b)) */
 CHIP Xor {
   IN a, b;
