@@ -201,6 +201,61 @@ x & y == ~(x NAND y) == NAND(NAND(x, y), NAND(x, y))
 #+end_src
 And since we know we can represent or with just the NOT operator and the AND operator we now know we can represent all boolean functions with just NAND.
 * 1.2 Logic gates
+When given a tech spec like so:
+#+CAPTION: xor gate
+[[./imgs/lecture_1_4_xor_gate.png]]
+#+begin_src asci
+a -> | xor
+     | xor -> out
+b -> | xor
+#+end_src
+| a | b | out |
+|---+---+-----|
+| 0 | 0 |   0 |
+| 0 | 1 |   1 |
+| 1 | 0 |   1 |
+| 1 | 1 |   0 |
+
+To design a gate using HDL the general structure is
+#+begin_src hdl
+/** Xor gate: out = (a And Not(b)) Or (Not(a) And b)) */
+CHIP Xor {
+  IN a, b;
+  OUT out;
+
+  PARTS:
+  // Implementation misssing
+}
+#+end_src
+The first line is documentation. This can be whatever you want it to be but it should describe what the gate does. Should contain: name of chip, name of it's inputs and outputs.
+Usually the chip name, inputs and outputs are not determined by the person writing the HDL file, it is usually given to them.
+The design of the chip happens under the PARTS section. A person designing these chips have to wear two hats, a hat for the interface (he does not design but needs to be aware of it) and the hat of the implementation designer.
+
+Let's assume that we've been given the implementation for the And, Or, and Not gate, how do we implement the above
+We start by synthesizing the boolean logic which states that ~a AND NOT(b) OR (NOT(a) AND B)~.
+We then think about a logic diagram that describes the above like so
+[[./imgs/lecture_1_4_derivation_xor_logic_gate_diagram.png]]
+let's draw the boundary of the diagram (the user's view of the gate, aka the interface)
+[[./imgs/lecture_1_4_derivation_xor_logic_gate_diagram_interface.png]]
+Notice that the ~a~ signal and ~b~ signal are being sent to two destinations, the AND gate and the NOT gate. In general, when writing a HDL diagram we can copy a signal and dispatch it to many different destinations. This is called fan-out, and you can have as many fan-outs as desired in HDL diagrams.
+The next step here is to name each of the connections in our diagram
+[[./imgs/lecture_1_4_derivation_xor_logic_gate_diagram_interface_named_interanl_conections.png]]
+With that we can implement this diagram with HDL.
+Here's our HDL stub file, let's focus on the implementation. We begin by describing one chip at a time that makes up the gate we are trying to construct. To do so, we write a single HDL statement that describes the chip along with all it's connections
+#+begin_src hdl :tangle xor.hdl
+/** Xor gate: out = (a And Not(b)) Or (Not(a) And b)) */
+CHIP Xor {
+  IN a, b;
+  OUT out;
+
+  PARTS:
+  Not (in=a, out=nota);
+  Not (in=b, out=notb);
+  And (a=a, b=notb, out=aAndNotb);
+  And (a=nota, b=b, out notaAndb);
+  Or (a=aAndNotb, b=notaAndb, out=out);
+}
+#+end_src
 
 * Thanks
 Thank you to Raquel for the help on boolean logic and pointing out the absorption law that governs boolean logic
